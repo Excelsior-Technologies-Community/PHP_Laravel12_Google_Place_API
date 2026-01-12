@@ -1,59 +1,259 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PHP_Laravel12_Google_Place_API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+##  Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This project demonstrates how to integrate the **Google Places API** into a Laravel 12 application.
+It enables developers to easily implement features such as address autocomplete, place details retrieval, and nearby location searches using latitude and longitude.
 
-## Learning Laravel
+The integration is built using the Laravel package:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```
+avcodewizard/google-place-api
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+##  Features
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+*  Place autocomplete search (cities, states, locations)
+*  Fetch place details using `place_id`
+*  Find nearby places using latitude & longitude
+*  Simple REST API implementation
+*  Secure API key handling via `.env`
+*  Compatible with Laravel 9, 10, 11 & 12
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+##  Folder Structure
 
-## Contributing
+```
+app/
+ └── Http/
+     └── Controllers/
+         └── PlaceController.php
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+routes/
+ ├── api.php
+ └── web.php
 
-## Code of Conduct
+.env
+composer.json
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+##  Requirements
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+* PHP 8.1+
+* Laravel 12
+* Composer
+* Google Cloud account with billing enabled
+* Google Places API enabled
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+##  Step-by-Step Installation Guide
+
+---
+
+### Step 1: Create / Open Laravel Project
+
+If you already have a Laravel project, skip this step.
+
+```bash
+composer create-project laravel/laravel google-places-demo
+```
+
+---
+
+### Step 2: Environment Configuration
+
+Update your `.env` file with database credentials:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+---
+
+### Step 3: Install Google Places API Package
+
+Install the package via Composer:
+
+```bash
+composer require avcodewizard/google-place-api
+```
+
+> The service provider is auto-registered by Laravel.
+
+---
+
+### Step 4: Get Google Places API Key
+
+1. Open **Google Cloud Console**
+2. Create or select a project
+3. Enable the following APIs:
+
+   * Places API
+   * Maps JavaScript API (optional)
+4. Enable **Billing**
+5. Create an **API Key**
+6. Restrict the key (recommended):
+
+   * HTTP referrer (frontend)
+   * IP address (backend)
+
+---
+
+### Step 5: Configure API Key in Laravel
+
+Add the API key to your `.env` file:
+
+```env
+GOOGLE_PLACES_API_KEY=your_google_places_api_key
+```
+
+Clear and cache config:
+
+```bash
+php artisan config:clear
+
+php artisan config:cache
+```
+
+---
+
+### Step 6: Create Controller
+
+Create a controller:
+
+```bash
+php artisan make:controller PlaceController
+```
+
+**`app/Http/Controllers/PlaceController.php`**
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Avcodewizard\GooglePlaceApi\GooglePlacesApi;
+
+class PlaceController extends Controller
+{
+    public function searchPlace(Request $request)
+    {
+        $query = $request->input('query');
+
+        $googlePlaces = new GooglePlacesApi();
+        $results = $googlePlaces->searchPlace($query);
+
+        return response()->json($results);
+    }
+
+    public function placeDetails($placeId)
+    {
+        $googlePlaces = new GooglePlacesApi();
+        $results = $googlePlaces->getPlaceDetails($placeId);
+
+        return response()->json($results);
+    }
+
+    public function nearbyPlaces(Request $request)
+    {
+        $latitude  = $request->latitude;
+        $longitude = $request->longitude;
+        $radius    = $request->radius;
+        $type      = $request->type; // optional
+
+        $googlePlaces = new GooglePlacesApi();
+        $results = $googlePlaces->findNearbyPlaces(
+            $latitude,
+            $longitude,
+            $radius,
+            $type
+        );
+
+        return response()->json($results);
+    }
+}
+```
+
+---
+
+### Step 7: Define API Routes
+
+**`routes/api.php`**
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PlaceController;
+
+Route::get('/places/search', [PlaceController::class, 'searchPlace']);
+Route::get('/places/details/{placeId}', [PlaceController::class, 'placeDetails']);
+Route::get('/places/nearby', [PlaceController::class, 'nearbyPlaces']);
+```
+
+---
+
+### Step 8: Test Using Postman / Browser
+
+####  Search Place
+
+```
+GET http://127.0.0.1:8000/api/places/search?query=Ahmedabad
+```
+
+####  Place Details
+
+```
+GET http://127.0.0.1:8000/api/places/details/PLACE_ID_HERE
+```
+
+####  Nearby Places
+
+```
+GET http://127.0.0.1:8000/api/places/nearby?latitude=23.0225&longitude=72.5714&radius=1500&type=restaurant
+```
+
+---
+
+##  Common Use Cases
+
+* Checkout address autocomplete
+* Store locator
+* Nearby restaurant / shop search
+* Delivery radius validation
+* City & state auto-fill
+
+---
+
+##  Security Notes
+
+* Always restrict Google API keys
+* Set billing budget alerts
+* Cache API responses to reduce usage
+* Never expose unrestricted keys publicly
+
+---
+
+##  License
+
+This project is open-source and licensed under the **MIT License**.
+
+---
+
+
