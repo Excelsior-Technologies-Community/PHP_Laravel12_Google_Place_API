@@ -1,5 +1,12 @@
 # PHP_Laravel12_Google_Place_API
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
+  <img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google%20Places%20API-Enabled-4285F4?style=for-the-badge&logo=google-maps&logoColor=white" />
+  <img src="https://img.shields.io/badge/API-REST%20JSON-000000?style=for-the-badge&logo=json&logoColor=white" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
+</p>
 
 
 ---
