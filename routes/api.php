@@ -25,6 +25,16 @@ Route::get(
     [PlaceController::class, 'nearbyPlaces']
 );
 
+Route::get(
+    '/places/autocomplete',
+    [PlaceController::class, 'autocomplete']
+);
+
+Route::get(
+    '/places/distance',
+    [PlaceController::class, 'calculateDistance']
+);
+
 
 /*
 |--------------------------------------------------------------------------
